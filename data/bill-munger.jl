@@ -2,6 +2,8 @@
 using JSON
 using MapLight
 
+using DataFrames
+
 function join_bill_data(position_file, description_folder)
     bills = Dict()
 
@@ -17,4 +19,9 @@ function join_bill_data(position_file, description_folder)
     end
 
     bills
+end
+
+function build_industry_table(maplight_bulk_file)
+    bulk_table = readtable(maplight_bulk_file)
+    unique(bulk_table[:Catcode])
 end
