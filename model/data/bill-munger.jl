@@ -23,5 +23,5 @@ end
 
 function build_industry_table(maplight_bulk_file)
     bulk_table = readtable(maplight_bulk_file)
-    unique(bulk_table[:Catcode])
+    { r[:Catcode] => r[:Industry] for r in eachrow(bulk_table) }
 end
