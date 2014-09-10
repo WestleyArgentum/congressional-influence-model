@@ -56,7 +56,6 @@ function build_timeline(bills)
 
     timeline = PriorityQueue()
     for (aid, bill) in bill_unique
-        introduced = bill["dateIntroduced"]
         enqueue!(timeline, ["introduced", aid], bill["dateIntroduced"])
         enqueue!(timeline, ["vote", aid], bill["dateVote"])
     end
