@@ -19,14 +19,22 @@ for (aid, bill) in bills
     for s in supporters
         for o in opposers
             pair = s < o ? (s, o) : (o, s)
-            get!(opposing_groups, pair, 0)
-            opposing_groups[pair] += 1
+            get!(opposing_groups, pair, { "total" => 0, s => 0, o => 0 })
+            stats = opposing_groups[pair]
+            stats["total"] += 1
+
+            if bill["passed"]
+                stats[s] += 1
+            else
+                stats[o] += 1
+            end
+
         end
     end
 end
 
 biggest_adversaries = collect(opposing_groups)
-sort!(biggest_adversaries, lt = (lhs, rhs)->lhs[2] > rhs[2])
+sort!(biggest_adversaries, lt = (lhs, rhs)->lhs[2]["total"] > rhs[2]["total"])
 
 for adversaries in biggest_adversaries
     group1 = industries[adversaries[1][1]]["Catname"]
