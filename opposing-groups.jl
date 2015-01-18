@@ -1,8 +1,13 @@
 
 using JSON
 
+require("./src/influence-game.jl")
+
 bills = JSON.parse(readall("./data/113th-bills.json"))
 industries = JSON.parse(readall("./data/crp-categories.json"))
+
+bills = InfluenceGame.filter_has_votes(bills)
+bills = InfluenceGame.filter_overlapping_votes(bills)
 
 opposing_groups = Dict()
 
