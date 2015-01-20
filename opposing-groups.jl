@@ -19,14 +19,23 @@ for (aid, bill) in bills
     for s in supporters
         for o in opposers
             pair = s < o ? (s, o) : (o, s)
-            get!(opposing_groups, pair, { "total" => 0, s => 0, o => 0 })
+
+            get!(opposing_groups, pair, {
+                "total" => 0,
+                "vote_favors" => { s => 0, o => 0 },
+                "oppose" => { s => 0, o => 0 },
+                "support" => { s => 0, o => 0 }
+            })
+
             stats = opposing_groups[pair]
             stats["total"] += 1
+            stats["support"][s] += 1
+            stats["oppose"][o] += 1
 
             if bill["passed"]
-                stats[s] += 1
+                stats["vote_favors"][s] += 1
             else
-                stats[o] += 1
+                stats["vote_favors"][o] += 1
             end
 
         end
