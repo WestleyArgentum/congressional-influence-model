@@ -48,5 +48,8 @@ sort!(biggest_adversaries, lt = (lhs, rhs)->lhs[2]["total"] > rhs[2]["total"])
 for adversaries in biggest_adversaries
     group1 = industries[adversaries[1][1]]["Catname"]
     group2 = industries[adversaries[1][2]]["Catname"]
-    println("$group1 | $group2  -- total: $(adversaries[2]["total"]), support: $(adversaries[2]["support"])")
+
+    vote_favors = { id => length(votes) for (id, votes) in adversaries[2]["vote_favors"] }
+    println("$group1 | $group2  -- total: $(adversaries[2]["total"]), support: $(adversaries[2]["support"]), vote_favors: $vote_favors")
+
 end
