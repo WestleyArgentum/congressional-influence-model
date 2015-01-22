@@ -31,18 +31,14 @@ for (aid, bill) in bills
             stats["total"] += 1
             push!(stats["supported_by"][s], aid)
 
-            money = bill["money"]
-            if money["totalFor"] > money["totalAgainst"]
-                push!(stats["money_favors"][s], aid)
-            else
-                push!(stats["money_favors"][o], aid)
-            end
+            money_for = bill["money"]["totalFor"]
+            money_against = bill["money"]["totalAgainst"]
 
-            if bill["passed"]
-                push!(stats["vote_favors"][s], aid)
-            else
-                push!(stats["vote_favors"][o], aid)
-            end
+            favored = money_for >= money_against ? stats["money_favors"][s] : stats["money_favors"][o]
+            push!(favored, aid)
+
+            favored = bill["passed"] ? stats["vote_favors"][s] : stats["vote_favors"][o]
+            push!(favored, aid)
 
         end
     end
