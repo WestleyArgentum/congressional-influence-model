@@ -23,12 +23,20 @@ for (aid, bill) in bills
             get!(opposing_groups, pair, {
                 "total" => 0,
                 "vote_favors" => { s => String[], o => String[] },
-                "supported_by" => { s => String[], o => String[] }
+                "money_favors" => { s => String[], o => String[] },
+                "supported_by" => { s => String[], o => String[] },
             })
 
             stats = opposing_groups[pair]
             stats["total"] += 1
             push!(stats["supported_by"][s], aid)
+
+            money = bill["money"]
+            if money["totalFor"] > money["totalAgainst"]
+                push!(stats["money_favors"][s], aid)
+            else
+                push!(stats["money_favors"][o], aid)
+            end
 
             if bill["passed"]
                 push!(stats["vote_favors"][s], aid)
@@ -48,6 +56,7 @@ for adversaries in biggest_adversaries
     group2 = industries[adversaries[1][2]]["Catname"]
 
     vote_favors = { id => length(votes) for (id, votes) in adversaries[2]["vote_favors"] }
+    money_favors = { id => length(bills) for (id, bills) in adversaries[2]["money_favors"] }
     supported_by = { id => length(bills) for (id, bills) in adversaries[2]["supported_by"] }
-    println("$group1 | $group2  -- total: $(adversaries[2]["total"]), supported_by: $supported_by, vote_favors: $vote_favors")
+    println("$group1 | $group2  -- total: $(adversaries[2]["total"]), supported_by: $supported_by, vote_favors: $vote_favors, money_favors: $money_favors")
 end
