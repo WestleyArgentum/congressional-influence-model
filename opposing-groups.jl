@@ -24,7 +24,7 @@ for (aid, bill) in bills
             get!(opposing_groups, pair, {
                 "total" => 0,
                 "vote_favors" => { s => String[], o => String[] },
-                "money_favors" => { s => String[], o => String[] },
+                "total_money_favors" => { s => String[], o => String[] },
                 "supported_by" => { s => String[], o => String[] },
             })
 
@@ -35,7 +35,7 @@ for (aid, bill) in bills
             money_for = bill["money"]["totalFor"]
             money_against = bill["money"]["totalAgainst"]
 
-            favored = money_for >= money_against ? stats["money_favors"][s] : stats["money_favors"][o]
+            favored = money_for >= money_against ? stats["total_money_favors"][s] : stats["total_money_favors"][o]
             push!(favored, aid)
 
             favored = bill["passed"] ? stats["vote_favors"][s] : stats["vote_favors"][o]
@@ -53,9 +53,9 @@ for adversaries in biggest_adversaries[1:20]
     group2 = industries[adversaries[1][2]]["Catname"]
 
     vote_favors = { id => length(votes) for (id, votes) in adversaries[2]["vote_favors"] }
-    money_favors = { id => length(bills) for (id, bills) in adversaries[2]["money_favors"] }
+    total_money_favors = { id => length(bills) for (id, bills) in adversaries[2]["total_money_favors"] }
     supported_by = { id => length(bills) for (id, bills) in adversaries[2]["supported_by"] }
-    println("$group1 | $group2  -- total: $(adversaries[2]["total"]), supported_by: $supported_by, vote_favors: $vote_favors, money_favors: $money_favors")
+    println("$group1 | $group2  -- total: $(adversaries[2]["total"]), supported_by: $supported_by, vote_favors: $vote_favors, total_money_favors: $total_money_favors")
 end
 
 function load_contributions(bill, contribs_path)
