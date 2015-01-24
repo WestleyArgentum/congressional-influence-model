@@ -1,5 +1,6 @@
 
 using JSON
+using DataFrames
 
 require("./src/influence-game.jl")
 
@@ -47,7 +48,7 @@ end
 biggest_adversaries = collect(opposing_groups)
 sort!(biggest_adversaries, lt = (lhs, rhs)->lhs[2]["total"] > rhs[2]["total"])
 
-for adversaries in biggest_adversaries
+for adversaries in biggest_adversaries[1:20]
     group1 = industries[adversaries[1][1]]["Catname"]
     group2 = industries[adversaries[1][2]]["Catname"]
 
@@ -55,4 +56,25 @@ for adversaries in biggest_adversaries
     money_favors = { id => length(bills) for (id, bills) in adversaries[2]["money_favors"] }
     supported_by = { id => length(bills) for (id, bills) in adversaries[2]["supported_by"] }
     println("$group1 | $group2  -- total: $(adversaries[2]["total"]), supported_by: $supported_by, vote_favors: $vote_favors, money_favors: $money_favors")
+end
+
+function load_contributions(bill, contribs_path)
+    session = bill["session"]
+    prefix = bill["prefix"]
+    num = bill["num"]
+    aid = bill["actionId"]
+
+    contrib_path = joinpath(contribs_path, "$session-$prefix-$num-$aid-contributions.csv")
+    contrib_table = readtable(contrib_path)
+
+    contrib_data = Dict()
+    for contrib in eachrow(contrib_table)
+        catcode = contrib[:Contributor_Interest_Group_Code]
+        amount = int(replace(contrib[:Contribution_Amount], '$', ""))
+
+        get!(contrib_data, catcode, 0)
+        contrib_data[catcode] += amount
+    end
+
+    return contrib_data
 end
