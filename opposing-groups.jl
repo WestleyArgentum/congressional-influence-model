@@ -2,7 +2,34 @@
 using JSON
 using DataFrames
 
-require("./src/influence-game.jl")
+function filter_overlapping_votes(bills)
+    overlap = Any[]
+    for (k,v) in bills
+        for (k2,v2) in bills
+            if k != k2 && v["num"] == v2["num"] && v["prefix"] == v2["prefix"]
+                if !([k, k2] in overlap) && !([k2, k] in overlap)
+                    push!(overlap, [k, k2])
+                end
+            end
+        end
+    end
+
+    for (id1, id2) in overlap
+        (haskey(bills, id1) && haskey(bills, id2)) || continue
+
+        passed1 = get(bills[id1], "dateVote", -1)
+        passed2 = get(bills[id2], "dateVote", -2)
+        if passed1 == passed2
+            delete!(bills, id1)
+        end
+    end
+
+    bills
+end
+
+function filter_has_votes(bills)
+    bills_with_votes = filter((k,b)->get(b, "action", "") == "passage", bills)
+end
 
 function load_contributions(bill, contribs_path)
     session = bill["session"]
@@ -52,8 +79,8 @@ end
 bills = JSON.parse(readall("./data/113th-bills.json"))
 industries = JSON.parse(readall("./data/crp-categories.json"))
 
-bills = InfluenceGame.filter_has_votes(bills)
-bills = InfluenceGame.filter_overlapping_votes(bills)
+bills = filter_has_votes(bills)
+bills = filter_overlapping_votes(bills)
 
 opposing_groups = Dict()
 
