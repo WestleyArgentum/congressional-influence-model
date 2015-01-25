@@ -38,6 +38,8 @@ function load_contributions(bill, contribs_path)
     aid = bill["actionId"]
 
     contrib_path = joinpath(contribs_path, "$session-$prefix-$num-$aid-contributions.csv")
+    !isfile(contrib_path) && error("Cannot find contrib data (looking for $contrib_path).\nMaybe you need to download the data using https://github.com/WestleyArgentum/maplight-scraper")
+
     contrib_data = Dict()
 
     try
@@ -86,7 +88,7 @@ function compute_opposing_groups(bills)
         supporters = positions["support"]
         opposers = positions["oppose"]
 
-        contributions = load_contributions(bill, "./data/15-1-23-contributions-113")
+        contributions = load_contributions(bill, "./data/113th-contributions")
 
         for s in supporters
             for o in opposers
