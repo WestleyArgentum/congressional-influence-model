@@ -6,6 +6,6 @@ Unfortunately, due to size constraints, not all of the campaign finance data can
 
 #### How to run
 
-1. Copy the contribution `.csv` files scraped from MapLight into `./113th-contributions`
+1. Copy the contribution `.csv` files scraped from MapLight into `./data/113th-contributions`
 2. Launch a [Julia](http://julialang.org/) REPL.
 3. `julia> require(“./opposing-groups.jl”)`
