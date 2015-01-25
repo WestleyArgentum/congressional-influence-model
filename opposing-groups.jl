@@ -150,5 +150,7 @@ bills = filter_has_votes(bills)
 bills = filter_overlapping_votes(bills)
 
 opposing_groups = compute_opposing_groups(bills)
+
 println("\n-------\n")
+
 show_opposing_groups(opposing_groups, industries)
