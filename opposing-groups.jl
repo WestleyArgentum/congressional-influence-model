@@ -145,6 +145,39 @@ function show_opposing_groups(opposing_groups::Dict, industries)
     end
 end
 
+function generate_vote_favors_table(opposing_groups::Dict, industries)
+    biggest_adversaries = collect(opposing_groups)
+    sort!(biggest_adversaries, lt = (lhs, rhs)->lhs[2]["total"] > rhs[2]["total"])
+
+    raw_votes = [ collect(adversaries[2]["vote_favors"]) for adversaries in biggest_adversaries ]
+
+    group1_column = Any[]
+    group2_column = Any[]
+    votes1_column = Any[]
+    votes2_column = Any[]
+
+    for votes in raw_votes
+        group1 = industries[votes[1][1]]["Catname"]
+        group2 = industries[votes[2][1]]["Catname"]
+        votes1 = length(votes[1][2])
+        votes2 = length(votes[2][2])
+
+        if votes1 >= votes2
+            push!(group1_column, group1)
+            push!(votes1_column, votes1)
+            push!(group2_column, group2)
+            push!(votes2_column, votes2)
+        else
+            push!(group2_column, group1)
+            push!(votes2_column, votes1)
+            push!(group1_column, group2)
+            push!(votes1_column, votes2)
+        end
+    end
+
+    DataFrame(group1 = group1_column, votes1 = votes1_column, group2 = group2_column, votes2 = votes2_column)
+end
+
 bills = JSON.parse(readall("./data/113th-bills.json"))
 industries = JSON.parse(readall("./data/crp-categories.json"))
 
