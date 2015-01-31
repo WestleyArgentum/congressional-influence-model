@@ -151,10 +151,11 @@ function generate_vote_favors_table(opposing_groups::Dict, industries)
 
     raw_votes = [ collect(adversaries[2]["vote_favors"]) for adversaries in biggest_adversaries ]
 
-    group1_column = Any[]
-    group2_column = Any[]
-    votes1_column = Any[]
-    votes2_column = Any[]
+    group1_column = String[]
+    group2_column = String[]
+    votes1_column = Int[]
+    votes2_column = Int[]
+    totals_column = Int[]
 
     for votes in raw_votes
         group1 = industries[votes[1][1]]["Catname"]
@@ -173,9 +174,11 @@ function generate_vote_favors_table(opposing_groups::Dict, industries)
             push!(group1_column, group2)
             push!(votes1_column, votes2)
         end
+
+        push!(totals_column, votes1 + votes2)
     end
 
-    DataFrame(group1 = group1_column, votes1 = votes1_column, group2 = group2_column, votes2 = votes2_column)
+    DataFrame(group1 = group1_column, votes1 = votes1_column, group2 = group2_column, votes2 = votes2_column, totals = totals_column)
 end
 
 bills = JSON.parse(readall("./data/113th-bills.json"))
